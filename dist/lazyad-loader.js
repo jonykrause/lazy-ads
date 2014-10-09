@@ -2050,6 +2050,8 @@ Copyright (c) 2014 Derek Brans, MIT license https://github.com/krux/postscribe/b
     };
 
 
-    return init;
+    return { 
+      init: init
+    };
 
 }));
