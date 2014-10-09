@@ -246,6 +246,8 @@
     };
 
 
-    return init;
+    return { 
+      init: init
+    };
 
 }));
