@@ -2,7 +2,6 @@
   if (typeof exports === 'object' && typeof require === 'function') {
     module.exports = factory();
   } else if (typeof define === "function" && define.amd) {
-    // AMD. Register as an anonymous module.
     define(factory);
   } else {
     factory();
@@ -18,11 +17,6 @@
     };
 
     var startTime;
-
-
-    // Global object
-    window.LazyAds = LazyAds = {};
-
 
 
     /**
@@ -48,52 +42,6 @@
         }
     }
 
-    // // Debounce source: https://github.com/rhysbrettbowen/debounce
-    // function debounce(func, wait) {
-    //     // we need to save these in the closure
-    //     var timeout, args, context, timestamp;
-
-    //     return function() {
-
-    //         // save details of latest call
-    //         context = this;
-    //         args = [].slice.call(arguments, 0);
-    //         timestamp = new Date();
-
-    //         // this is where the magic happens
-    //         var later = function() {
-
-    //             // how long ago was the last call
-    //             var last = (new Date()) - timestamp;
-
-    //             // if the latest call was less that the wait period ago
-    //             // then we reset the timeout to wait for the difference
-    //             if (last < wait) {
-    //                 timeout = setTimeout(later, wait - last);
-
-    //                 // or if not we can null out the timer and run the latest
-    //             } else {
-    //                 timeout = null;
-    //                 func.apply(context, args);
-    //             }
-    //         };
-
-    //         // we only need to set the timer now if one isn't already running
-    //         if (!timeout) {
-    //             timeout = setTimeout(later, wait);
-    //         }
-    //     };
-    // }
-
-    // function addEvent(evnt, elem, func) {
-    //     if (elem.addEventListener) // W3C DOM
-    //         elem.addEventListener(evnt, func, false);
-    //     else if (elem.attachEvent) { // IE DOM
-    //         elem.attachEvent("on" + evnt, func);
-    //     } else { // No much to do
-    //         elem["on" + evnt] = func;
-    //     }
-    // }
 
 
     // Internals
@@ -273,7 +221,7 @@
     }
 
     // Expose init method
-    LazyAds.init = function() {
+    var init = function() {
         var adContainers,
             timeToComplete,
             counter = 0;
@@ -297,19 +245,7 @@
         log('Lazy-loaded count: ', counter, timeToComplete);
     };
 
-    // LazyAds.domready = domready;
 
-    // dependency on ready.js
-    // domready(function() {
-
-    //     // watch the windows resize event
-    //     addEvent('resize', window, debounce(function(e) {
-    //         LazyAds.init();
-    //     }, 250));
-
-    //     LazyAds.init();
-    // });
-
-    return LazyAds;
+    return init;
 
 }));
