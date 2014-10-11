@@ -123,21 +123,34 @@
         return str.replace('<!--', '').replace('-->', '').trim();
     };
 
-    var adReplace = function(el, text) {
+    //TODO: add callback via options to postscribe
+    //TODO: set attribute in postscribe callback
+    var adReplace = function(el, text, options) {
         var node, target;
 
         log('Injecting lazy-loaded Ad', el);
 
+        function done() {
+          el.setAttribute('data-lazyad-loaded', true);
+          if (options.onAdReplaced &&
+            typeof options.onAdReplaced === 'function') {
+            return options.onAdReplaced();
+          }
+        }
+
         text = stripCommentBlock(text);
         setTimeout(function() {
-            postscribe(el, text);
+            postscribe(el, text, {
+              done: done
+            });
         }, 0);
 
         // set the loaded flag
-        el.setAttribute('data-lazyad-loaded', true);
+        // el.setAttribute('data-lazyad-loaded', true);
     };
 
-    var processAll = function(adContainers) {
+    // TODO: add options
+    var processAll = function(adContainers, options) {
 
         var counter = 0,
             el,
@@ -177,7 +190,7 @@
                     if (sizeReqFulfilled === false) {
                         // log('Lazy-loaded container dimensions fulfilment not met.', reqAdWidth, reqAdHeight, elWidth, elHeight, el, lazyAdEl);
                         if (isLoaded) {
-                            unloadAds(el);
+                            unloadAds(el, options);
                         }
                         break;
                     }
@@ -192,7 +205,7 @@
                 }
 
                 if (!isLoaded) {
-                    adReplace(el, lazyAdEl.innerHTML);
+                    adReplace(el, lazyAdEl.innerHTML, options);
                     counter++;
                 }
 
@@ -203,7 +216,16 @@
         return counter;
     };
 
-    var unloadAds = function(el) {
+    var unloadAds = function(el, options) {
+
+        function done() {
+          el.setAttribute('data-lazyad-loaded', "false");
+          if (options.onAdsUnloaded &&
+            typeof options.onAdsUnloaded === 'function') {
+            return options.onAdsUnloaded();
+          }
+        }
+
         log('Unloading Ad:', el);
         var childNodes = el.getElementsByTagName('*');
 
@@ -217,14 +239,18 @@
             }
         }
 
-        el.setAttribute('data-lazyad-loaded', "false");
+        // el.setAttribute('data-lazyad-loaded', "false");
+        return done();
     }
 
+    // TODO: add options
     // Expose init method
-    var init = function() {
+    var init = function(options) {
         var adContainers,
             timeToComplete,
             counter = 0;
+
+        options = options || {};
 
         // reset timer
         startTime = new Date().getTime();
@@ -234,7 +260,7 @@
 
         // process/replace/unload
         if (adContainers && adContainers.length > 0) {
-            counter = processAll(adContainers);
+            counter = processAll(adContainers, options);
         }
 
         // stop the clock…
@@ -246,7 +272,7 @@
     };
 
 
-    return { 
+    return {
       init: init
     };
 

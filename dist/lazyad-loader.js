@@ -1,7 +1,7 @@
 /**
 * lazyad-loader
 * Deliver synchronous ads asynchronously with RWD support without modifying the ad code.
-* Madgex. Build date: 09-10-2014
+* Madgex. Build date: 11-10-2014
 */
 
 // An html parser written in JavaScript
@@ -1927,21 +1927,34 @@ Copyright (c) 2014 Derek Brans, MIT license https://github.com/krux/postscribe/b
         return str.replace('<!--', '').replace('-->', '').trim();
     };
 
-    var adReplace = function(el, text) {
+    //TODO: add callback via options to postscribe
+    //TODO: set attribute in postscribe callback
+    var adReplace = function(el, text, options) {
         var node, target;
 
         log('Injecting lazy-loaded Ad', el);
 
+        function done() {
+          el.setAttribute('data-lazyad-loaded', true);
+          if (options.onAdReplaced &&
+            typeof options.onAdReplaced === 'function') {
+            return options.onAdReplaced();
+          }
+        }
+
         text = stripCommentBlock(text);
         setTimeout(function() {
-            postscribe(el, text);
+            postscribe(el, text, {
+              done: done
+            });
         }, 0);
 
         // set the loaded flag
-        el.setAttribute('data-lazyad-loaded', true);
+        // el.setAttribute('data-lazyad-loaded', true);
     };
 
-    var processAll = function(adContainers) {
+    // TODO: add options
+    var processAll = function(adContainers, options) {
 
         var counter = 0,
             el,
@@ -1981,7 +1994,7 @@ Copyright (c) 2014 Derek Brans, MIT license https://github.com/krux/postscribe/b
                     if (sizeReqFulfilled === false) {
                         // log('Lazy-loaded container dimensions fulfilment not met.', reqAdWidth, reqAdHeight, elWidth, elHeight, el, lazyAdEl);
                         if (isLoaded) {
-                            unloadAds(el);
+                            unloadAds(el, options);
                         }
                         break;
                     }
@@ -1996,7 +2009,7 @@ Copyright (c) 2014 Derek Brans, MIT license https://github.com/krux/postscribe/b
                 }
 
                 if (!isLoaded) {
-                    adReplace(el, lazyAdEl.innerHTML);
+                    adReplace(el, lazyAdEl.innerHTML, options);
                     counter++;
                 }
 
@@ -2007,7 +2020,16 @@ Copyright (c) 2014 Derek Brans, MIT license https://github.com/krux/postscribe/b
         return counter;
     };
 
-    var unloadAds = function(el) {
+    var unloadAds = function(el, options) {
+
+        function done() {
+          el.setAttribute('data-lazyad-loaded', "false");
+          if (options.onAdsUnloaded &&
+            typeof options.onAdsUnloaded === 'function') {
+            return options.onAdsUnloaded();
+          }
+        }
+
         log('Unloading Ad:', el);
         var childNodes = el.getElementsByTagName('*');
 
@@ -2021,14 +2043,18 @@ Copyright (c) 2014 Derek Brans, MIT license https://github.com/krux/postscribe/b
             }
         }
 
-        el.setAttribute('data-lazyad-loaded', "false");
+        // el.setAttribute('data-lazyad-loaded', "false");
+        return done();
     }
 
+    // TODO: add options
     // Expose init method
-    var init = function() {
+    var init = function(options) {
         var adContainers,
             timeToComplete,
             counter = 0;
+
+        options = options || {};
 
         // reset timer
         startTime = new Date().getTime();
@@ -2038,7 +2064,7 @@ Copyright (c) 2014 Derek Brans, MIT license https://github.com/krux/postscribe/b
 
         // process/replace/unload
         if (adContainers && adContainers.length > 0) {
-            counter = processAll(adContainers);
+            counter = processAll(adContainers, options);
         }
 
         // stop the clock…
@@ -2050,7 +2076,7 @@ Copyright (c) 2014 Derek Brans, MIT license https://github.com/krux/postscribe/b
     };
 
 
-    return { 
+    return {
       init: init
     };
 
