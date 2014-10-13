@@ -217,8 +217,8 @@
         function done() {
           el.setAttribute('data-lazyad-loaded', "false");
           if (options.onAdsUnloaded &&
-            typeof options.onAdsUnloaded === 'function') {
-            return options.onAdsUnloaded(el);
+            typeof options.onAdUnloaded === 'function') {
+            return options.onAdUnloaded(el);
           }
         }
 
