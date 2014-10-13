@@ -215,8 +215,8 @@
     var unloadAds = function(el, options) {
 
         function done() {
-          el.setAttribute('data-lazyad-loaded', "false");
-          if (options.onAdsUnloaded &&
+          el.setAttribute('data-lazyad-loaded', false);
+          if (options.onAdUnloaded &&
             typeof options.onAdUnloaded === 'function') {
             return options.onAdUnloaded(el);
           }

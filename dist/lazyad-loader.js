@@ -2019,8 +2019,8 @@ Copyright (c) 2014 Derek Brans, MIT license https://github.com/krux/postscribe/b
     var unloadAds = function(el, options) {
 
         function done() {
-          el.setAttribute('data-lazyad-loaded', "false");
-          if (options.onAdsUnloaded &&
+          el.setAttribute('data-lazyad-loaded', false);
+          if (options.onAdUnloaded &&
             typeof options.onAdUnloaded === 'function') {
             return options.onAdUnloaded(el);
           }
