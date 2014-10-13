@@ -123,10 +123,9 @@
         return str.replace('<!--', '').replace('-->', '').trim();
     };
 
-    //TODO: add callback via options to postscribe
-    //TODO: set attribute in postscribe callback
     var adReplace = function(el, text, options) {
         var node, target;
+        text = stripCommentBlock(text);
 
         log('Injecting lazy-loaded Ad', el);
 
@@ -138,18 +137,15 @@
           }
         }
 
-        text = stripCommentBlock(text);
-        setTimeout(function() {
-            postscribe(el, text, {
+        return setTimeout(function() {
+            return postscribe(el, text, {
               done: done
             });
         }, 0);
 
-        // set the loaded flag
-        // el.setAttribute('data-lazyad-loaded', true);
     };
 
-    // TODO: add options
+
     var processAll = function(adContainers, options) {
 
         var counter = 0,
@@ -239,21 +235,19 @@
             }
         }
 
-        // el.setAttribute('data-lazyad-loaded', "false");
         return done();
     }
 
-    // TODO: add options
     // Expose init method
     var init = function(options) {
         var adContainers,
-            timeToComplete,
+            // timeToComplete,
             counter = 0;
 
         options = options || {};
 
         // reset timer
-        startTime = new Date().getTime();
+        // startTime = new Date().getTime();
 
         // find all lazyads
         adContainers = findAdContainers();
@@ -264,11 +258,11 @@
         }
 
         // stop the clock…
-        timeToComplete = (new Date().getTime() - startTime);
-        timeToComplete = '~' + timeToComplete + 'ms';
+        // timeToComplete = (new Date().getTime() - startTime);
+        // timeToComplete = '~' + timeToComplete + 'ms';
 
         // finished
-        log('Lazy-loaded count: ', counter, timeToComplete);
+        // log('Lazy-loaded count: ', counter, timeToComplete);
     };
 
 
