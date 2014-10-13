@@ -133,7 +133,7 @@
           el.setAttribute('data-lazyad-loaded', true);
           if (options.onAdReplaced &&
             typeof options.onAdReplaced === 'function') {
-            return options.onAdReplaced();
+            return options.onAdReplaced(el);
           }
         }
 
@@ -218,7 +218,7 @@
           el.setAttribute('data-lazyad-loaded', "false");
           if (options.onAdsUnloaded &&
             typeof options.onAdsUnloaded === 'function') {
-            return options.onAdsUnloaded();
+            return options.onAdsUnloaded(el);
           }
         }
 
