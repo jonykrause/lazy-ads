@@ -1,7 +1,7 @@
 /**
 * lazyad-loader
 * Deliver synchronous ads asynchronously with RWD support without modifying the ad code.
-* Madgex. Build date: 11-10-2014
+* Madgex. Build date: 13-10-2014
 */
 
 // An html parser written in JavaScript
@@ -1927,10 +1927,9 @@ Copyright (c) 2014 Derek Brans, MIT license https://github.com/krux/postscribe/b
         return str.replace('<!--', '').replace('-->', '').trim();
     };
 
-    //TODO: add callback via options to postscribe
-    //TODO: set attribute in postscribe callback
     var adReplace = function(el, text, options) {
         var node, target;
+        text = stripCommentBlock(text);
 
         log('Injecting lazy-loaded Ad', el);
 
@@ -1938,22 +1937,19 @@ Copyright (c) 2014 Derek Brans, MIT license https://github.com/krux/postscribe/b
           el.setAttribute('data-lazyad-loaded', true);
           if (options.onAdReplaced &&
             typeof options.onAdReplaced === 'function') {
-            return options.onAdReplaced();
+            return options.onAdReplaced(el);
           }
         }
 
-        text = stripCommentBlock(text);
-        setTimeout(function() {
-            postscribe(el, text, {
+        return setTimeout(function() {
+            return postscribe(el, text, {
               done: done
             });
         }, 0);
 
-        // set the loaded flag
-        // el.setAttribute('data-lazyad-loaded', true);
     };
 
-    // TODO: add options
+
     var processAll = function(adContainers, options) {
 
         var counter = 0,
@@ -2025,8 +2021,8 @@ Copyright (c) 2014 Derek Brans, MIT license https://github.com/krux/postscribe/b
         function done() {
           el.setAttribute('data-lazyad-loaded', "false");
           if (options.onAdsUnloaded &&
-            typeof options.onAdsUnloaded === 'function') {
-            return options.onAdsUnloaded();
+            typeof options.onAdUnloaded === 'function') {
+            return options.onAdUnloaded(el);
           }
         }
 
@@ -2043,21 +2039,19 @@ Copyright (c) 2014 Derek Brans, MIT license https://github.com/krux/postscribe/b
             }
         }
 
-        // el.setAttribute('data-lazyad-loaded', "false");
         return done();
     }
 
-    // TODO: add options
     // Expose init method
     var init = function(options) {
         var adContainers,
-            timeToComplete,
+            // timeToComplete,
             counter = 0;
 
         options = options || {};
 
         // reset timer
-        startTime = new Date().getTime();
+        // startTime = new Date().getTime();
 
         // find all lazyads
         adContainers = findAdContainers();
@@ -2068,11 +2062,11 @@ Copyright (c) 2014 Derek Brans, MIT license https://github.com/krux/postscribe/b
         }
 
         // stop the clock…
-        timeToComplete = (new Date().getTime() - startTime);
-        timeToComplete = '~' + timeToComplete + 'ms';
+        // timeToComplete = (new Date().getTime() - startTime);
+        // timeToComplete = '~' + timeToComplete + 'ms';
 
         // finished
-        log('Lazy-loaded count: ', counter, timeToComplete);
+        // log('Lazy-loaded count: ', counter, timeToComplete);
     };
 
 
