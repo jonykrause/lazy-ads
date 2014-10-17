@@ -2,6 +2,11 @@
     "name": "lazyad-loader",
     "main": "./dist/lazyad-loader.js",
     "version": "1.1.7",
+    "main": "./dist/lazyad-loader.js",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/jonykrause/lazy-ads.git#feature/programmatically-usage"
+    },
     "description": "Deliver synchronous ads asynchronously with RWD support without modifying the ad code.",
     "devDependencies": {
         "grunt": "^0.4.5",
